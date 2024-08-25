@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: npm
-          image: npm
+          image: sumitroopchandani/hello-gitops
           ports:
             - containerPort: 3001
 ---
