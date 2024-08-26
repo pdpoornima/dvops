@@ -6,8 +6,8 @@ resources:
 namespace: gitops
 images:
 - name: nginx
-  newName: sumitroopchandani/nginx
+  newName: poornima7/nginx
   newTag: latest
 - name: npm
-  newName: sumitroopchandani/hello-gitops
-  newTag: "18"
+  newName: poornima7/hello-gitops
+  newTag: "22"

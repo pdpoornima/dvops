@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: npm
-          image: sumitroopchandani/hello-gitops
+          image: poornima7/hello-gitops
           ports:
             - containerPort: 3001
 ---
@@ -37,8 +37,8 @@ spec:
     spec:
       containers:
         - name: frontend-node
-          image: nginx
-          livenessProbe:
+          image: poornima7/nginx
+          livenessProbe: 
             httpGet:
               path: /
               port: 80
