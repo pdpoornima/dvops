@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -13,19 +16,31 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Install Packer
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y wget unzip
-        wget https://releases.hashicorp.com/packer/1.7.8/packer_1.7.8_linux_amd64.zip
-        unzip packer_1.7.8_linux_amd64.zip
-        sudo mv packer /usr/local/bin/
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
 
     - name: Install Ansible
       run: |
-        sudo apt-get update
-        sudo apt-get install -y ansible
+        python3 -m pip install --upgrade pip
+        pip install ansible
+
+    - name: Install Packer
+      run: |
+        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+        sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+        sudo apt-get update && sudo apt-get install packer
+
+    - name: Run Ansible Playbook
+      run: |
+        ansible-playbook your_playbook.yml
 
     - name: Run Packer
       run: |
-        packer build packer-template.json
+        packer build your_packer_template.json
