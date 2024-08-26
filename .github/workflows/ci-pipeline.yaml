@@ -15,7 +15,7 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-      
+
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
@@ -35,8 +35,9 @@ jobs:
 
     - name: Install Packer
       run: |
-        # Download Packer binary
-        curl -Lo packer.zip https://releases.hashicorp.com/packer/1.12.0/packer_1.12.0_linux_amd64.zip
+        # Download the latest Packer binary
+        PACKER_VERSION=1.13.0  
+        curl -Lo packer.zip https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip
         unzip packer.zip
         mv packer ~/.local/bin/
         echo "${{ runner.env.HOME }}/.local/bin" >> $GITHUB_PATH
