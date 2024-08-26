@@ -1,6 +1,6 @@
 {
     "variables": {
-      "project_id": "{{env GCP_PROJECT_ID}}",
+      "project_id": "devops-433705",
       "source_image_family": "debian-10",
       "image_name": "my-custom-image"
     },
