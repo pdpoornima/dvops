@@ -14,7 +14,12 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'  # Specify the Node.js version
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -24,7 +29,8 @@ jobs:
     - name: Install Ansible
       run: |
         python3 -m pip install --upgrade pip
-        pip install --user --upgrade ansible
+        pip install --user ansible
+        # Add the user's local binary path to the PATH
         echo "${{ runner.env.HOME }}/.local/bin" >> $GITHUB_PATH
 
     - name: Install Packer
@@ -37,8 +43,8 @@ jobs:
 
     - name: Run Ansible Playbook
       run: |
-        ansible-playbook your_playbook.yml
+        ansible-playbook playbook.yml
 
     - name: Run Packer
       run: |
-        packer build your_packer_template.json
+        packer build packer-template.json
