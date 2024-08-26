@@ -16,11 +16,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20'
-
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -29,13 +24,16 @@ jobs:
     - name: Install Ansible
       run: |
         python3 -m pip install --upgrade pip
-        pip install ansible
+        pip install --user --upgrade ansible
+        echo "${{ runner.env.HOME }}/.local/bin" >> $GITHUB_PATH
 
     - name: Install Packer
       run: |
-        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-        sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-        sudo apt-get update && sudo apt-get install packer
+        # Download Packer binary
+        curl -Lo packer.zip https://releases.hashicorp.com/packer/1.12.0/packer_1.12.0_linux_amd64.zip
+        unzip packer.zip
+        mv packer ~/.local/bin/
+        echo "${{ runner.env.HOME }}/.local/bin" >> $GITHUB_PATH
 
     - name: Run Ansible Playbook
       run: |
