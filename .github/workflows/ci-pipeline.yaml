@@ -21,11 +21,11 @@ jobs:
       with:
         node-version: '20'  # Specify the Node.js version
 
-    - name: Authenticate with GCP
+    - name: Authenticate to Google Cloud
       run: |
-        echo "${{ secrets.GCP_CREDENTIALS }}" > "${{ runner.temp }}/gcloud.json"
-        gcloud auth activate-service-account --key-file="${{ runner.temp }}/gcloud.json"
-        gcloud config set project devops-433705       
+        echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" | base64 --decode > $HOME/gcloud-service-key.json
+        gcloud auth activate-service-account --key-file=$HOME/gcloud-service-key.json
+        gcloud config set project devops-433705      
 
     - name: Set up Python
       uses: actions/setup-python@v4
