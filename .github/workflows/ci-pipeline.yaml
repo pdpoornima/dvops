@@ -20,12 +20,7 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '20'  # Specify the Node.js version
-
-    - name: Authenticate to Google Cloud
-      run: |
-        echo "${{ secrets.GCP_CREDENTIALS }}" >| base64 --decode >  $HOME/gcloud-service-key.json
-        gcloud auth activate-service-account --key-file="${{ secrets.GCP_CREDENTIALS }}"
-        gcloud config set project devops-433705      
+   
     - name: List files in home directory
       run: ls -la $HOME
 
