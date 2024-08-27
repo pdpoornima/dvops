@@ -42,6 +42,13 @@ jobs:
         mv packer ~/.local/bin/
         echo "${{ runner.env.HOME }}/.local/bin" >> $GITHUB_PATH
 
+    - name: Install Google Cloud Packer Plugin
+      run: |
+        mkdir -p ~/.packer.d/plugins
+        curl -Lo ~/.packer.d/plugins/packer-plugin-googlecompute https://github.com/hashicorp/packer-plugin-googlecompute/releases/download/v1.1.6/packer-plugin-googlecompute_v1.1.6_x5.0_linux_amd64.zip
+        unzip ~/.packer.d/plugins/packer-plugin-googlecompute -d ~/.packer.d/plugins/
+        chmod +x ~/.packer.d/plugins/packer-plugin-googlecompute
+
     - name: Run Ansible Playbook
       run: |
         ansible-playbook playbook.yml
