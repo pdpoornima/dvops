@@ -30,4 +30,6 @@ steps:
     id: 'Check Deployment'
     args: ['rollout', 'status', 'deployment/nginx']
 
-timeout: '1200s'
+  # Your build steps here
+timeout: "1200s"
+logsBucket: "gs://mybuildbucket"
