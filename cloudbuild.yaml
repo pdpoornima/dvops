@@ -1,0 +1,33 @@
+steps:
+  # Step 1: Retrieve Docker Hub credentials from Secret Manager
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Retrieving Docker Hub credentials..."
+        export DOCKERHUB_USERNAME=$(gcloud secrets versions access latest --secret="dockerhub-username")
+        export DOCKERHUB_PASSWORD=$(gcloud secrets versions access latest --secret="dockerhub-password")
+        docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
+
+  # Step 2: Pull NGINX Image from Docker Hub (Optional if you don't want to rebuild)
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Pull NGINX Image'
+    args: ['pull', 'poornima7/nginx:latest']
+
+  # Step 3: Pull npm Image from Docker Hub (Optional if you don't want to rebuild)
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Pull npm Image'
+    args: ['pull', 'poornima7/hello-gitops:22']
+
+  # Step 4: Deploy using kustomization.yaml to Kubernetes (GKE)
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'Deploy to GKE'
+    args: ['apply', '-k', './k8s']
+
+  # Step 5: Check the Deployment status
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'Check Deployment'
+    args: ['rollout', 'status', 'deployment/nginx']
+
+timeout: '1200s'
