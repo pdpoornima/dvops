@@ -6,8 +6,8 @@ steps:
       - '-c'
       - |
         echo "Retrieving Docker Hub credentials..."
-        DOCKERHUB_USERNAME=$(gcloud secrets versions access latest --secret=dockerhub-username --project=devops-433705)
-        DOCKERHUB_PASSWORD=$(gcloud secrets versions access latest --secret=dockerhub-password --project=devops-433705)
+        DOCKERHUB_USERNAME=$(gcloud secrets versions access latest --secret=dockerhub-username)
+        DOCKERHUB_PASSWORD=$(gcloud secrets versions access latest --secret=dockerhub-password)
         echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
   
 
