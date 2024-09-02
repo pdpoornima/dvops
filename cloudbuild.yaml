@@ -1,16 +1,19 @@
 steps:
-  - name: 'gcr.io/cloud-builders/docker'
-    entrypoint: 'bash'
-    args: ['-c', ". ./cloudbuilds/script.sh $$USERNAME $$PASSWORD"]
-    secretEnv: ['USERNAME', 'PASSWORD']
-
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: ['-c', 'echo Username=$$USERNAME && echo Password=$$PASSWORD']
+  secretEnv: ['USERNAME', 'PASSWORD']
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: ['cloudbuilds/script.sh', '$$USERNAME', '$$PASSWORD']
+  secretEnv: ['USERNAME', 'PASSWORD']
  # Pull NGINX frontend image
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['pull', 'poornima7/nginx:latest']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['pull', 'poornima7/nginx:latest']
 
   # Pull npm backend image
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['pull', 'poornima7/hello-gitops:22']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['pull', 'poornima7/hello-gitops:22']
 
 availableSecrets:
   secretManager:
