@@ -1,9 +1,9 @@
-
 steps:
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     args: ['-c', 'docker login --username=$$USERNAME --password=$$PASSWORD']
     secretEnv: ['USERNAME', 'PASSWORD']
+
  # Pull NGINX frontend image
   - name: 'gcr.io/cloud-builders/docker'
     args: ['pull', 'poornima7/nginx:latest']
