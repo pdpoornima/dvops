@@ -1,38 +1,40 @@
 steps:
-- name: 'gcr.io/cloud-builders/docker'
-  entrypoint: 'bash'
-  args: ['-c', 'echo Username=$$USERNAME && echo Password=$$PASSWORD']
-  secretEnv: ['USERNAME', 'PASSWORD']
-- name: 'gcr.io/cloud-builders/docker'
-  entrypoint: 'bash'
-  args: ['cloudbuilds/script.sh', '$$USERNAME', '$$PASSWORD']
-  secretEnv: ['USERNAME', 'PASSWORD']
- # Pull NGINX frontend image
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['pull', 'poornima7/nginx:latest']
+  # Step 1: Authenticate with Docker Hub using Secret Manager
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        docker login -u "$$USERNAME" -p "$$PASSWORD"
+    secretEnv: ['USERNAME', 'PASSWORD']
 
-  # Pull npm backend image
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['pull', 'poornima7/hello-gitops:22']
+  # Step 2: Pull the NGINX image from Docker Hub
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['pull', 'poornima/nginx:latest']
+
+  # Step 3: Pull the npm image from Docker Hub
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['pull', 'poornima/hello-gitops:22']
+
+  # Step 4: Deploy to GKE using kubectl
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'apply'
+      - '-f'
+      - 'kustomization.yaml'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=us-east5-a'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=my-cluster'
+
+# Timeout for the entire build
+timeout: '1200s'
+
+# Specify a Cloud Storage bucket to store the build logs
+logsBucket: 'gs://mybuildbucket'
 
 availableSecrets:
   secretManager:
-  - versionName: projects/devops-433705/secrets/docker-username/versions/latest
-    env: 'USERNAME'
-  - versionName: projects/devops-433705/secrets/docker-password/versions/latest
-    env: 'PASSWORD'
-
- 
-  # Step 4: Deploy using kustomization.yaml to Kubernetes (GKE)
-  - name: 'gcr.io/cloud-builders/kubectl'
-    id: 'Deploy to GKE'
-    args: ['apply', '-k', './k8s']
-
-  # Step 5: Check the Deployment status
-  - name: 'gcr.io/cloud-builders/kubectl'
-    id: 'Check Deployment'
-    args: ['rollout', 'status', 'deployment/nginx']
-
-  # Your build steps here
-timeout: "1200s"
-logsBucket: "gs://mybuildbucket"
+    - versionName: 'projects/PROJECT_ID/secrets/docker-username/versions/latest'
+      env: 'USERNAME'
+    - versionName: 'projects/PROJECT_ID/secrets/docker-password/versions/latest'
+      env: 'PASSWORD'
