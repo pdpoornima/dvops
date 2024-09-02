@@ -1,12 +1,13 @@
 steps:
   # Step 1: Retrieve Docker Hub credentials from Secret Manager
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         echo "Logging into Docker Hub..."
         docker login -u "${_DOCKERHUB_USERNAME}" -p "${_DOCKERHUB_PASSWORD}"
+
 
   # Step 2: Pull NGINX Image from Docker Hub (Optional if you don't want to rebuild)
   - name: 'gcr.io/cloud-builders/docker'
