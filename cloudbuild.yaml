@@ -5,9 +5,9 @@ steps:
   secretEnv: ['USERNAME', 'PASSWORD']
 availableSecrets:
   secretManager:
-  - versionName: projects/devops-433705/secrets/docker-password/versions/1
+  - versionName: projects/devops-433705/secrets/docker-password/versions/latest
     env: 'PASSWORD'
-  - versionName: projects/devops-433705/secrets/docker-username/versions/1
+  - versionName: projects/devops-433705/secrets/docker-username/versions/latest
     env: 'USERNAME'
 
   # Step 2: Pull NGINX Image from Docker Hub (Optional if you don't want to rebuild)
