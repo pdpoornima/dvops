@@ -1,25 +1,25 @@
-steps:
-- name: 'gcr.io/cloud-builders/docker'
-  entrypoint: 'bash'
-  args: ['-c', 'docker login --username=$$USERNAME --password=$$PASSWORD']
-  secretEnv: ['USERNAME', 'PASSWORD']
-availableSecrets:
-  secretManager:
-  - versionName: projects/devops-433705/secrets/docker-password/versions/latest
-    env: 'PASSWORD'
-  - versionName: projects/devops-433705/secrets/docker-username/versions/latest
-    env: 'USERNAME'
 
-  # Step 2: Pull NGINX Image from Docker Hub (Optional if you don't want to rebuild)
+steps:
   - name: 'gcr.io/cloud-builders/docker'
-    id: 'Pull NGINX Image'
+    entrypoint: 'bash'
+    args: ['-c', 'docker login --username=$$USERNAME --password=$$PASSWORD']
+    secretEnv: ['USERNAME', 'PASSWORD']
+ # Pull NGINX frontend image
+  - name: 'gcr.io/cloud-builders/docker'
     args: ['pull', 'poornima7/nginx:latest']
 
-  # Step 3: Pull npm Image from Docker Hub (Optional if you don't want to rebuild)
+  # Pull npm backend image
   - name: 'gcr.io/cloud-builders/docker'
-    id: 'Pull npm Image'
     args: ['pull', 'poornima7/hello-gitops:22']
 
+availableSecrets:
+  secretManager:
+  - versionName: "projects/devops-433705/secrets/docker-username/versions/latest"
+    env: 'USERNAME'
+  - versionName: "projects/devops-433705/secrets/docker-password/versions/latest"
+    env: 'PASSWORD'
+
+ 
   # Step 4: Deploy using kustomization.yaml to Kubernetes (GKE)
   - name: 'gcr.io/cloud-builders/kubectl'
     id: 'Deploy to GKE'
