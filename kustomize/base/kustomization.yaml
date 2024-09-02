@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
 - deployment.yaml
 - service.yaml
-namespace: gitops
+#namespace: gitops
 images:
 - name: nginx
   newName: poornima7/nginx
