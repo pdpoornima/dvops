@@ -5,11 +5,8 @@ steps:
     args:
       - '-c'
       - |
-        echo "Retrieving Docker Hub credentials..."
-        DOCKERHUB_USERNAME=$(gcloud secrets versions access latest --secret=dockerhub-username)
-        DOCKERHUB_PASSWORD=$(gcloud secrets versions access latest --secret=dockerhub-password)
-        echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-  
+        echo "Logging into Docker Hub..."
+        docker login -u "${_DOCKERHUB_USERNAME}" -p "${_DOCKERHUB_PASSWORD}"
 
   # Step 2: Pull NGINX Image from Docker Hub (Optional if you don't want to rebuild)
   - name: 'gcr.io/cloud-builders/docker'
