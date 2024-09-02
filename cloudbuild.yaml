@@ -17,9 +17,9 @@ steps:
 
 availableSecrets:
   secretManager:
-  - versionName: 'projects/devops-433705/secrets/docker-username/versions/latest'
+  - versionName: projects/devops-433705/secrets/docker-username/versions/latest
     env: 'USERNAME'
-  - versionName: 'projects/devops-433705/secrets/docker-password/versions/latest'
+  - versionName: projects/devops-433705/secrets/docker-password/versions/latest
     env: 'PASSWORD'
 
  
