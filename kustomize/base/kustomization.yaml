@@ -6,8 +6,8 @@ resources:
 #namespace: gitops
 images:
 - name: nginx
-  newName: poornima7/nginx
+  newName: gcr.io/devops-433705/nginx:latest
   newTag: latest
 - name: npm
-  newName: poornima7/hello-gitops
+  newName: gcr.io/devops-433705/hello-gitops:22
   newTag: "22"

@@ -1,4 +1,3 @@
----   
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,6 +19,7 @@ spec:
         image: gcr.io/devops-433705/nginx:latest
         ports:
         - containerPort: 80
+
 ---
 
 apiVersion: apps/v1
@@ -39,7 +39,7 @@ spec:
         app: npm
     spec:
       containers:
-      - name: backend-container
-        image: gcr.io/devops-433706/hello-gitops:22
+      - name: npm
+        image: gcr.io/devops-433705/hello-gitops:22
         ports:
         - containerPort: 3001
