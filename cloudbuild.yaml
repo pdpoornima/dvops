@@ -32,12 +32,14 @@ steps:
       - 'rollout'
       - 'status'
       - 'deployment/frontend-node'
+      - '--namespace=gitops'
 
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
       - 'rollout'
       - 'status'
       - 'deployment/npm'
+      - '--namespace=gitops'
 
 
 timeout: 1200s

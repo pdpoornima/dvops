@@ -6,7 +6,7 @@ metadata:
   # This annotation is only required if you are creating an internal facing ELB. Remove this annotation to create public facing ELB.
   #service.beta.kubernetes.io/aws-load-balancer-internal: "true"
   name: frontend-node
-  #namespace: prod-ns
+  namespace: gitops
   labels:
     app: frontend-node
 spec:
@@ -26,7 +26,7 @@ metadata:
   # This annotation is only required if you are creating an internal facing ELB. Remove this annotation to create public facing ELB.
   #service.beta.kubernetes.io/aws-load-balancer-internal: "true"
   name: npm
-  #namespace: prod-ns
+  namespace: gitops
   labels:
     app: npm
 spec:

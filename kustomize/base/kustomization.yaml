@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
 - deployment.yaml
 - service.yaml
-#namespace: gitops
+namespace: gitops
 images:
 - name: nginx
   newName: gcr.io/devops-433705/nginx:latest
