@@ -38,3 +38,4 @@ steps:
       - 'deployment/npm'
 
 timeout: 1200s
+logsBucket: "gs://mybuildbucket"
