@@ -1,3 +1,7 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'E2_MEDIUM'  # Change here to match the cluster's node type
+  
 steps:
   # Step 1: Authenticate with the Kubernetes cluster
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -24,6 +28,8 @@ steps:
       - '-f'
       - 'kustomize/base/service.yaml'
 
+
+
   # Step 3: Verify the deployments
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
@@ -36,6 +42,7 @@ steps:
       - 'rollout'
       - 'status'
       - 'deployment/npm'
+
 
 timeout: 1200s
 logsBucket: "gs://mybuildbucket"
