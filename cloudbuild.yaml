@@ -18,16 +18,12 @@ steps:
   # Step 2: Apply the deployment and service YAMLs
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
-      - 'apply'
-      - '-f'
-      - 'kustomize/base/deployment.yaml'
-
-  - name: 'gcr.io/cloud-builders/kubectl'
-    args:
-      - 'apply'
-      - '-f'
-      - 'kustomize/base/service.yaml'
-
+      - '-c'
+      - |
+        gcloud config set compute/region us-east5
+        gcloud config set compute/zone us-east5-a
+        kubectl apply -f deployment.yaml
+        kubectl apply -f service.yaml
 
 
   # Step 3: Verify the deployments
