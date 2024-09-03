@@ -23,7 +23,7 @@ steps:
       - |
         gcloud config set compute/region us-east5
         gcloud config set compute/zone us-east5-a
-        kubectl apply -k .
+        kubectl apply -k kustomize/base
 
 
   # Step 3: Verify the deployments
