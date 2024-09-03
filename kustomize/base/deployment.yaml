@@ -1,30 +1,10 @@
----    
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: npm
-  #namespace: prod-ns
-spec:
-  replicas: 4
-  selector:
-    matchLabels:
-      app: npm
-  template:
-    metadata:
-      labels:
-        app: npm
-    spec:
-      containers:
-        - name: npm
-          image: poornima7/hello-gitops
-          ports:
-            - containerPort: 3001
----
+---   
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend-node
-  #namespace: prod-ns
+  labels:
+    app: frontend-node
 spec:
   replicas: 2
   selector:
@@ -36,20 +16,30 @@ spec:
         app: frontend-node
     spec:
       containers:
-        - name: frontend-node
-          image: poornima7/nginx
-          livenessProbe: 
-            httpGet:
-              path: /
-              port: 80
-            initialDelaySeconds: 0
-            periodSeconds: 10
-            timeoutSeconds: 1
-            failureThreshold: 3
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 80
-            successThreshold: 3
-          ports:
-            - containerPort: 80              
+      - name: frontend-node
+        image: gcr.io/devops-433705/nginx:latest
+        ports:
+        - containerPort: 80
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: npm
+  labels:
+    app: npm
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: npm
+  template:
+    metadata:
+      labels:
+        app: npm
+    spec:
+      containers:
+      - name: backend-container
+        image: gcr.io/devops-433706/hello-gitops:22
+        ports:
+        - containerPort: 3001

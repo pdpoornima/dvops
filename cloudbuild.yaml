@@ -1,40 +1,40 @@
 steps:
-  # Step 1: Authenticate with Docker Hub using Secret Manager
-  - name: 'gcr.io/cloud-builders/docker'
-    entrypoint: 'bash'
+  # Step 1: Authenticate with the Kubernetes cluster
+  - name: 'gcr.io/cloud-builders/gcloud'
     args:
-      - '-c'
-      - |
-        docker login -u "$$USERNAME" -p "$$PASSWORD"
-    secretEnv: ['USERNAME', 'PASSWORD']
+      - 'container'
+      - 'clusters'
+      - 'get-credentials'
+      - 'my-gke-cluster'
+      - '--zone'
+      - 'us-east5-a'
+      - '--project'
+      - 'devops-433705'
 
-  # Step 2: Pull the NGINX image from Docker Hub
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['pull', 'poornima/nginx:latest']
-
-  # Step 3: Pull the npm image from Docker Hub
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['pull', 'poornima/hello-gitops:22']
-
-  # Step 4: Deploy to GKE using kubectl
+  # Step 2: Apply the deployment and service YAMLs
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
       - 'apply'
       - '-f'
-      - 'kustomization.yaml'
-    env:
-      - 'CLOUDSDK_COMPUTE_ZONE=us-east5-a'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=my-cluster'
+      - 'kustomize/base/deployment.yaml'
 
-# Timeout for the entire build
-timeout: '1200s'
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'apply'
+      - '-f'
+      - 'kustomize/base/service.yaml'
 
-# Specify a Cloud Storage bucket to store the build logs
-logsBucket: 'gs://mybuildbucket'
+  # Step 3: Verify the deployments
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'rollout'
+      - 'status'
+      - 'deployment/frontend-node'
 
-availableSecrets:
-  secretManager:
-    - versionName: 'projects/PROJECT_ID/secrets/docker-username/versions/latest'
-      env: 'USERNAME'
-    - versionName: 'projects/PROJECT_ID/secrets/docker-password/versions/latest'
-      env: 'PASSWORD'
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'rollout'
+      - 'status'
+      - 'deployment/npm'
+
+timeout: 1200s
