@@ -45,4 +45,4 @@ steps:
 
 
 timeout: 1200s
-logsBucket: "gs://mybuildbucket"
+#logsBucket: "gs://mybuildbucket"
