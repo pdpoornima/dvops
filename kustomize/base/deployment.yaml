@@ -16,10 +16,23 @@ spec:
         app: frontend-node
     spec:
       containers:
-      - name: frontend-node
-        image: gcr.io/devops-433705/nginx:latest
-        ports:
-        - containerPort: 80
+        - name: frontend-node
+          image: gcr.io/devops-433705/nginx:latest
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            successThreshold: 3
+          ports:
+            - containerPort: 80
 
 ---
 
@@ -44,4 +57,4 @@ spec:
       - name: npm
         image: gcr.io/devops-433705/hello-gitops:22
         ports:
-        - containerPort: 3001
+        - containerPort: 3000
