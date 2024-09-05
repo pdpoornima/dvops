@@ -24,25 +24,6 @@ steps:
         gcloud config set compute/region us-east5
         gcloud config set compute/zone us-east5-a
         kubectl apply -k kustomize/base
-  
-  # Step 3: Verify the deployments
-  - name: 'gcr.io/cloud-builders/kubectl'
-    args:
-      - 'rollout'
-      - 'status'
-      - 'deployment/frontend-node'
-      - '--namespace=gitops'
-      - '--v=9'
-      - '--timeout=120s'
-
-  - name: 'gcr.io/cloud-builders/kubectl'
-    args:
-      - 'rollout'
-      - 'status'
-      - 'deployment/npm'
-      - '--namespace=gitops'
-      - '--timeout=120s'
-
 
 timeout: 1200s
 #logsBucket: "gs://mybuildbucket"
