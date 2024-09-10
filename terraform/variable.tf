@@ -3,6 +3,10 @@ variable "project_id" {
   type        = string
   default     = "devops-433705"
 }
+variable "credentials_file" {
+  description = "C:/Users/Poornima/Documents/service-account-key.json"
+  type        = string
+}
 
 variable "region" {
   description = "The region where resources will be created"

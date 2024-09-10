@@ -1,5 +1,5 @@
 provider "google" {
-  credentials = file("C:/Users/Poornima/Documents/service-account-key.json")
+  credentials = file(var.credentials_file)
   project     = var.project_id
   region      = var.region
 }
