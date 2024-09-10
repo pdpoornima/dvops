@@ -58,3 +58,4 @@ spec:
         image: gcr.io/devops-433705/hello-gitops:22
         ports:
         - containerPort: 3000
+        
