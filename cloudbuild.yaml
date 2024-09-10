@@ -4,20 +4,20 @@ options:
 
 steps:
   # Step 1: Set up Terraform (Initialize)
-  - name: 'hashicorp/terraform:1.0.0'
+  - name: 'hashicorp/terraform:1.9.5'
     id: 'terraform-init'
     args:
       - 'init'
 
   # Step 2: Plan the Terraform changes for GKE cluster
-  - name: 'hashicorp/terraform:1.0.0'
+  - name: 'hashicorp/terraform:1.9.5'
     id: 'terraform-plan'
     args:
       - 'plan'
       - '-out=tfplan'
 
   # Step 3: Apply the Terraform plan (create the GKE cluster)
-  - name: 'hashicorp/terraform:1.0.0'
+  - name: 'hashicorp/terraform:1.9.5'
     id: 'terraform-apply'
     args:
       - 'apply'
