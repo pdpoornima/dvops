@@ -6,29 +6,23 @@ steps:
   # Step 1: Set up Terraform (Initialize)
   - name: 'hashicorp/terraform:1.9.5'
     id: 'terraform-init'
-    entrypoint: 'bash'
     args:
-      - '-c'
-      - |
-        terraform init
+      - 'init'
 
   # Step 2: Plan the Terraform changes for GKE cluster
   - name: 'hashicorp/terraform:1.9.5'
     id: 'terraform-plan'
-    entrypoint: 'bash'
     args:
-      - '-c'
-      - |
-        terraform plan -out=tfplan
+      - 'plan'
+      - '-out=tfplan'
 
   # Step 3: Apply the Terraform plan (create the GKE cluster)
   - name: 'hashicorp/terraform:1.9.5'
     id: 'terraform-apply'
-    entrypoint: 'bash'
     args:
-      - '-c'
-      - |
-        terraform apply -auto-approve tfplan
+      - 'apply'
+      - '-auto-approve'
+      - 'tfplan'
 
   # Step 4: Authenticate with the newly created GKE cluster
   - name: 'gcr.io/cloud-builders/gcloud'
