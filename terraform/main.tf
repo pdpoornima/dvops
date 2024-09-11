@@ -6,7 +6,7 @@ provider "google" {
 }
 
 resource "google_container_cluster" "primary" {
-  name     = "my-cluster"
+  name     = "my-gke-cluster"
   location = var.zone
 
   node_pool {

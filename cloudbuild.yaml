@@ -9,7 +9,7 @@ steps:
       - 'container'
       - 'clusters'
       - 'get-credentials'
-      - 'my-cluster'
+      - 'my-gke-cluster'
       - '--zone'
       - 'us-east5-a'
       - '--project'
