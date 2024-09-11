@@ -24,7 +24,7 @@ steps:
       - 'container'
       - 'clusters'
       - 'get-credentials'
-      - 'my-gke-cluster'  # Ensure this matches your cluster's name in main.tf
+      - 'my-cluster'  # Ensure this matches your cluster's name in main.tf
       - '--zone'
       - 'us-east5-a'
       - '--project'
