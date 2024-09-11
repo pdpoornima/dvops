@@ -3,6 +3,16 @@ options:
   machineType: 'E2_MEDIUM'  # Change here to match the cluster's node type
   
 steps:
+  # Step 0: Set up Terraform
+  - name: "hashicorp/terraform:light"
+    entrypoint: "/bin/sh"
+    args:
+      - "-c"
+      - |
+        cd terraform
+        terraform init
+        terraform apply -auto-approve
+
   # Step 1: Authenticate with the Kubernetes cluster
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
