@@ -1,36 +1,21 @@
 options:
   logging: CLOUD_LOGGING_ONLY
-  machineType: 'E2_MEDIUM'  # Match the cluster's node type
-
+  machineType: 'E2_MEDIUM'  # Change here to match the cluster's node type
+  
 steps:
-  # Step 1: Use the official Terraform Docker image to initialize Terraform
-  - name: 'hashicorp/terraform:1.9.5'
-    id: 'terraform-init'
-    args: ['init']
-  # Step 2: Validate the Terraform files
-  - name: 'hashicorp/terraform:1.9.5'
-    id: 'terraform-validate'
-    args: ['validate']
-
-  # Step 3: Apply the Terraform configuration to provision resources
-  - name: 'hashicorp/terraform:1.9.5'
-    id: 'terraform-apply'
-    args: ['apply', '-auto-approve']
-
-  # Step 4: Authenticate with the newly created GKE cluster
+  # Step 1: Authenticate with the Kubernetes cluster
   - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'gke-auth'
     args:
       - 'container'
       - 'clusters'
       - 'get-credentials'
-      - 'my-cluster'  # Ensure this matches your cluster's name in main.tf
+      - 'my-cluster'
       - '--zone'
       - 'us-east5-a'
       - '--project'
-      - 'devops-433705'  # Use substitutions for the project ID
+      - 'devops-433705'
 
-  # Step 5: Apply the deployment and service YAMLs from kustomize
+  # Step 2: Apply the deployment and service YAMLs
   - name: 'gcr.io/cloud-builders/kubectl'
     entrypoint: 'bash'
     args:
@@ -40,5 +25,5 @@ steps:
         gcloud config set compute/zone us-east5-a
         kubectl apply -k kustomize/base
 
-# Timeout to allow sufficient time for Terraform and Kubernetes tasks
-timeout: 1800s
+timeout: 1200s
+#logsBucket: "gs://mybuildbucket"
