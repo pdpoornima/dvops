@@ -4,42 +4,10 @@ options:
   
 steps:
   # Step 0: Set up Terraform
-  - name: "hashicorp/terraform:light"
-    entrypoint: "/bin/sh"
-    args:
-      - "-c"
-      - |
-        cd terraform
-        terraform init
-        terraform apply -auto-approve
+  - name: 'hashicorp/terraform:1.0.0'
+    id: 'terraform-init'
+    args: ['init']
+  - name: 'hashicorp/terraform:1.0.0'
+    id: 'terraform-apply'
+    args: ['apply', '-auto-approve']
 
-  # Step 1: Authenticate with the Kubernetes cluster
-  - name: 'gcr.io/cloud-builders/gcloud'
-    args:
-      - 'container'
-      - 'clusters'
-      - 'get-credentials'
-      - 'my-gke-cluster'
-      - '--zone'
-      - 'us-east5-a'
-      - '--project'
-      - 'devops-433705'
-  # Step 2: Create the "gitops" namespace
-  - name: 'gcr.io/cloud-builders/kubectl'
-    args:
-      - 'create'
-      - 'namespace'
-      - 'gitops'
-
-  # Step 3: Apply the deployment and service YAMLs
-  - name: 'gcr.io/cloud-builders/kubectl'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        gcloud config set compute/region us-east5
-        gcloud config set compute/zone us-east5-a
-        kubectl apply -k kustomize/base
-
-timeout: 1200s
-#logsBucket: "gs://mybuildbucket"

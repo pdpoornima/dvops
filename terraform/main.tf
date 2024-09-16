@@ -21,4 +21,9 @@ resource "google_container_cluster" "primary" {
     }
   }
 }
-
+resource "google_artifact_registry_repository" "docker_repo" {
+  provider    = google
+  location    = var.region
+  repository_id = "my-artifact-repo"
+  format      = "DOCKER"
+}
