@@ -1,6 +1,11 @@
-
+terraform {
+  backend "gcs" {
+    bucket = "mybuildbucket"
+    prefix = "terraform/state"
+  }
+}
 provider "google" {
-  credentials = file("C:/Users/Poornima/Documents/service-account-key.json")
+  
   project     = var.project_id
   region      = var.region
 }
