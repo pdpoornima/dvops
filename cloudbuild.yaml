@@ -2,12 +2,58 @@ options:
   logging: CLOUD_LOGGING_ONLY
   machineType: 'E2_MEDIUM'  # Change here to match the cluster's node type
   
-steps:
-  # Step 0: Set up Terraform
-  - name: 'hashicorp/terraform:1.0.0'
-    id: 'terraform-init'
-    args: ['init']
-  - name: 'hashicorp/terraform:1.0.0'
-    id: 'terraform-apply'
-    args: ['apply', '-auto-approve']
 
+steps:
+  # Step 1: Authenticate with the Kubernetes cluster
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'container'
+      - 'clusters'
+      - 'get-credentials'
+      - 'my-gke-cluster'
+      - '--zone'
+      - 'us-east5-a'
+      - '--project'
+      - 'devops-433705'
+
+  # Step 2: Set up environment variables (if necessary)
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        export GOOGLE_APPLICATION_CREDENTIALS=${_GOOGLE_APPLICATION_CREDENTIALS}
+        echo "Credentials set for service account"
+
+  # Step 3: Initialize Terraform in the correct directory
+  - name: 'hashicorp/terraform:light'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - 'cd terraform && terraform init'
+
+  # Step 4: Run Terraform plan
+  - name: 'hashicorp/terraform:light'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - 'cd terraform && terraform plan -out=tfplan'
+
+  # Step 5: Run Terraform apply
+  - name: 'hashicorp/terraform:light'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - 'cd terraform && terraform apply -auto-approve tfplan'
+
+  # Step 6: Apply the Kubernetes deployment and service YAMLs using kustomize
+  - name: 'gcr.io/cloud-builders/kubectl'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud config set compute/region us-east5
+        gcloud config set compute/zone us-east5-a
+        kubectl apply -k kustomize/base
+
+timeout: 1200s
