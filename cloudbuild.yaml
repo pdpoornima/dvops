@@ -45,8 +45,16 @@ steps:
     args:
       - '-c'
       - 'cd terraform && terraform apply -auto-approve tfplan'
+  # Step 6: Create the 'gitops' namespace if it does not exist
+  - name: 'gcr.io/cloud-builders/kubectl'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        kubectl get namespace gitops || kubectl create namespace gitops
 
-  # Step 6: Apply the Kubernetes deployment and service YAMLs using kustomize
+
+  # Step 7: Apply the Kubernetes deployment and service YAMLs using kustomize
   - name: 'gcr.io/cloud-builders/kubectl'
     entrypoint: 'bash'
     args:
