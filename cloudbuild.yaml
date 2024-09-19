@@ -71,18 +71,23 @@ steps:
       - '-c'
       - |
         echo "Installing ArgoCD..."
-        kubectl apply -n ${_ARGOCD_NAMESPACE} -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+        kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
         echo "ArgoCD installation completed or encountered an error."
       
 
   # Step 9: Wait for ArgoCD components to be ready
   - name: 'gcr.io/cloud-builders/kubectl'
+    entrypoint: 'bash'
     args:
-      - 'rollout'
-      - 'status'
-      - 'deployment/argocd-server'
-      - '-n'
-      - 'argocd'
+      - '-c'
+      - |
+        echo "Waiting for ArgoCD components to be ready..."
+        kubectl wait --for=condition=available --timeout=600s -n ${_ARGOCD_NAMESPACE} deployment/argocd-server
+        kubectl wait --for=condition=available --timeout=600s -n ${_ARGOCD_NAMESPACE} deployment/argocd-repo-server
+        kubectl wait --for=condition=available --timeout=600s -n ${_ARGOCD_NAMESPACE} deployment/argocd-application-controller
+        kubectl wait --for=condition=available --timeout=600s -n ${_ARGOCD_NAMESPACE} deployment/argocd-dex-server
+        echo "All ArgoCD components are ready."
+                  
   # Step 10: Fetch ArgoCD's external IP address and log in
   - name: 'gcr.io/cloud-builders/kubectl'
     entrypoint: 'bash'
