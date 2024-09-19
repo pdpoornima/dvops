@@ -87,6 +87,17 @@ steps:
         kubectl wait --for=condition=available --timeout=600s -n argocd deployment/argocd-application-controller
         kubectl wait --for=condition=available --timeout=600s -n argocd deployment/argocd-dex-server
         echo "All ArgoCD components are ready."
+
+  # Step to install ArgoCD CLI
+  - name: 'gcr.io/cloud-builders/curl'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Installing ArgoCD CLI..."
+        curl -sSL https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64 -o /usr/local/bin/argocd
+        chmod +x /usr/local/bin/argocd
+        echo "ArgoCD CLI installation completed."
                   
   # Step 10: Fetch ArgoCD's external IP address and log in
   - name: 'gcr.io/cloud-builders/kubectl'
