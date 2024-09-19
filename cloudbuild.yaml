@@ -1,6 +1,8 @@
 options:
   logging: CLOUD_LOGGING_ONLY
   machineType: 'E2_MEDIUM'  # Change here to match the cluster's node type
+substitutions:
+  _ARGOCD_IP: ''  # You can pass the ArgoCD IP dynamically here or fetch it within the pipeline
   
 
 steps:
