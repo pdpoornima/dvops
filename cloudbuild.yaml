@@ -54,6 +54,46 @@ steps:
         kubectl get namespace gitops || kubectl create namespace gitops
 
 
+
+  # Step 8: Apply ArgoCD YAML file from the repository
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'apply'
+      - '-n'
+      - 'gitops'
+      - '-f'
+      - 'manifests/argocd-install.yaml'
+
+  # Step 9: Patch ArgoCD server service with LoadBalancer
+  - name: 'gcr.io/cloud-builders/kubectl'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        kubectl patch svc argocd-server -n gitops \
+          -p '{"spec": {"type": "LoadBalancer"}}'
+  # Step 10: Wait for ArgoCD LoadBalancer IP to be assigned
+  - name: 'gcr.io/cloud-builders/kubectl'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Waiting for LoadBalancer IP..."
+        until kubectl get svc argocd-server -n gitops -o jsonpath='{.status.loadBalancer.ingress[0].ip}' > /dev/null; do sleep 10; done
+        ARGOCD_IP=$(kubectl get svc argocd-server -n gitops -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+        echo "ArgoCD server IP: $ARGOCD_IP"
+
+  # Step 11: Retrieve the ArgoCD initial admin password and login
+  - name: 'gcr.io/cloud-builders/kubectl'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        ARGOCD_PASSWORD=$(kubectl get secret argocd-initial-admin-secret -n gitops -o jsonpath='{.data.password}' | base64 -d)
+        ARGOCD_IP=$(kubectl get svc argocd-server -n gitops -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+        echo "Logging into ArgoCD server at $ARGOCD_IP"
+        argocd login $ARGOCD_IP --username admin --password $ARGOCD_PASSWORD --insecure
+
   # Step 7: Apply the Kubernetes deployment and service YAMLs using kustomize
   - name: 'gcr.io/cloud-builders/kubectl'
     entrypoint: 'bash'
@@ -63,5 +103,22 @@ steps:
         gcloud config set compute/region us-east5
         gcloud config set compute/zone us-east5-a
         kubectl apply -k kustomize/base
+  # Step 11: Create ArgoCD Application
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'apply'
+      - '-f'
+      - 'argocd-application.yaml'
+
+
+  # Step 12: Sync the ArgoCD application (Optional)
+  - name: 'gcr.io/cloud-builders/kubectl'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Syncing ArgoCD application"
+        argocd app sync my-app
+
 
 timeout: 1200s
