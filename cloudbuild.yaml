@@ -82,10 +82,10 @@ steps:
       - '-c'
       - |
         echo "Waiting for ArgoCD components to be ready..."
-        kubectl wait --for=condition=available --timeout=600s -n ${_ARGOCD_NAMESPACE} deployment/argocd-server
-        kubectl wait --for=condition=available --timeout=600s -n ${_ARGOCD_NAMESPACE} deployment/argocd-repo-server
-        kubectl wait --for=condition=available --timeout=600s -n ${_ARGOCD_NAMESPACE} deployment/argocd-application-controller
-        kubectl wait --for=condition=available --timeout=600s -n ${_ARGOCD_NAMESPACE} deployment/argocd-dex-server
+        kubectl wait --for=condition=available --timeout=600s -n argocd deployment/argocd-server
+        kubectl wait --for=condition=available --timeout=600s -n argocd deployment/argocd-repo-server
+        kubectl wait --for=condition=available --timeout=600s -n argocd deployment/argocd-application-controller
+        kubectl wait --for=condition=available --timeout=600s -n argocd deployment/argocd-dex-server
         echo "All ArgoCD components are ready."
                   
   # Step 10: Fetch ArgoCD's external IP address and log in
