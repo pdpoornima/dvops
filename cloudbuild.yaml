@@ -86,14 +86,17 @@ steps:
       - |
         ARGOCD_IP=$(kubectl -n argocd get svc argocd-server -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
         echo "ArgoCD Server External IP: $ARGOCD_IP"
+        echo $ARGOCD_IP > /workspace/argocd_ip.txt
   # Step 11: Login to ArgoCD using the external IP
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
+        ARGOCD_IP=$(cat /workspace/argocd_ip.txt)
         ARGOCD_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
         argocd login --insecure --username admin --password $ARGOCD_PASSWORD --grpc-web $ARGOCD_IP:443
+
 
   # Step 12: Create ArgoCD Application
   - name: 'gcr.io/cloud-builders/kubectl'
