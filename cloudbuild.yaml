@@ -52,7 +52,13 @@ steps:
       - '-c'
       - |
         kubectl get namespace gitops || kubectl create namespace gitops
-
+  # Step 6: Create the 'argocd' namespace if it does not exist
+  - name: 'gcr.io/cloud-builders/kubectl'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        kubectl get namespace argocd || kubectl create namespace argocd
 
 
   # Step 8: Install ArgoCD
@@ -97,14 +103,13 @@ steps:
       - 'argocd-application.yaml'
 
 
-  # Step 12: Sync the ArgoCD application (Optional)
-  - name: 'gcr.io/cloud-builders/kubectl'
-    entrypoint: 'bash'
+  # Step 13: Sync the ArgoCD Application
+  - name: 'argoproj/argocd'
+    entrypoint: 'argocd'
     args:
-      - '-c'
-      - |
-        echo "Syncing ArgoCD application"
-        argocd app sync my-app
+      - 'app'
+      - 'sync'
+      - 'devops-433705-app'
 
 
 timeout: 1200s
