@@ -66,12 +66,15 @@ steps:
   # Step 8: Install ArgoCD
   # Step 8: Apply ArgoCD YAML file from the repository
   - name: 'gcr.io/cloud-builders/kubectl'
+    entrypoint: 'bash'
     args:
-      - 'apply'
-      - '-n'
-      - 'gitops'
-      - '-f'
-      - 'manifests/argocd-install.yaml'
+      - '-c'
+      - |
+        echo "Installing ArgoCD..."
+        kubectl apply -n ${_ARGOCD_NAMESPACE} -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+        echo "ArgoCD installation completed or encountered an error."
+      
+
   # Step 9: Wait for ArgoCD components to be ready
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
