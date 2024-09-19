@@ -54,7 +54,7 @@ steps:
       - '-c'
       - |
         kubectl get namespace gitops || kubectl create namespace gitops
-  # Step 6: Create the 'argocd' namespace if it does not exist
+  # Step 7: Create the 'argocd' namespace if it does not exist
   - name: 'gcr.io/cloud-builders/kubectl'
     entrypoint: 'bash'
     args:
@@ -64,13 +64,14 @@ steps:
 
 
   # Step 8: Install ArgoCD
+  # Step 8: Apply ArgoCD YAML file from the repository
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
       - 'apply'
       - '-n'
-      - 'argocd'
+      - 'gitops'
       - '-f'
-      - 'https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml'
+      - 'manifests/argocd-install.yaml'
   # Step 9: Wait for ArgoCD components to be ready
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
@@ -79,7 +80,7 @@ steps:
       - 'deployment/argocd-server'
       - '-n'
       - 'argocd'
-  # Step 4: Fetch ArgoCD's external IP address and log in
+  # Step 10: Fetch ArgoCD's external IP address and log in
   - name: 'gcr.io/cloud-builders/kubectl'
     entrypoint: 'bash'
     args:
@@ -91,7 +92,7 @@ steps:
         argocd login $_ARGOCD_IP --username admin --password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
    
 
-  # Step 12: Create ArgoCD Application
+  # Step 11: Create ArgoCD Application
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
       - 'apply'
@@ -99,7 +100,7 @@ steps:
       - 'argocd-application.yaml'
 
 
-  # Step 6: Sync ArgoCD Application
+  # Step 12: Sync ArgoCD Application
   - name: 'gcr.io/cloud-builders/kubectl'
     entrypoint: 'bash'
     args:
