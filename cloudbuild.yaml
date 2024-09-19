@@ -79,26 +79,17 @@ steps:
       - 'deployment/argocd-server'
       - '-n'
       - 'argocd'
-  # Step 10: Get the ArgoCD server's external IP
+  # Step 4: Fetch ArgoCD's external IP address and log in
   - name: 'gcr.io/cloud-builders/kubectl'
-    id: 'get-argocd-ip'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        ARGOCD_IP=$(kubectl -n argocd get svc argocd-server -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-        echo "ArgoCD Server External IP: $ARGOCD_IP"
-        echo $ARGOCD_IP > /workspace/argocd_ip.txt
-  # Step 11: Login to ArgoCD using the external IP
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        ARGOCD_IP=$(cat /workspace/argocd_ip.txt)
-        ARGOCD_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
-        argocd login --insecure --username admin --password $ARGOCD_PASSWORD --grpc-web $ARGOCD_IP:443
-
+        _ARGOCD_IP=$(kubectl -n argocd get svc argocd-server -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+        echo "ArgoCD Server External IP: $_ARGOCD_IP"
+        kubectl config set-context --current --namespace=argocd
+        argocd login $_ARGOCD_IP --username admin --password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
+   
 
   # Step 12: Create ArgoCD Application
   - name: 'gcr.io/cloud-builders/kubectl'
@@ -108,13 +99,14 @@ steps:
       - 'argocd-application.yaml'
 
 
-  # Step 13: Sync the ArgoCD Application
-  - name: 'argoproj/argocd'
-    entrypoint: 'argocd'
+  # Step 6: Sync ArgoCD Application
+  - name: 'gcr.io/cloud-builders/kubectl'
+    entrypoint: 'bash'
     args:
-      - 'app'
-      - 'sync'
-      - 'devops-433705-app'
+      - '-c'
+      - |
+        echo "Syncing ArgoCD application"
+        argocd app sync devops-433705-app --server $_ARGOCD_IP
 
 
 timeout: 1200s
