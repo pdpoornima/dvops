@@ -73,6 +73,14 @@ steps:
         echo "Installing ArgoCD..."
         kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
         echo "ArgoCD installation completed or encountered an error."
+  # Step 2: Patch the ArgoCD server to LoadBalancer
+  - name: 'gcr.io/cloud-builders/kubectl'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Patching ArgoCD server to LoadBalancer..."
+        kubectl -n argocd patch svc argocd-server -p '{"spec": {"type": "LoadBalancer"}}'
       
 
   # Step 9: Wait for ArgoCD components to be ready
