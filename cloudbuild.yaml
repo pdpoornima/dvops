@@ -73,7 +73,7 @@ steps:
         echo "Installing ArgoCD..."
         kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
         echo "ArgoCD installation completed or encountered an error."
-  # Step 2: Patch the ArgoCD server to LoadBalancer
+  # Step 9: Patch the ArgoCD server to LoadBalancer
   - name: 'gcr.io/cloud-builders/kubectl'
     entrypoint: 'bash'
     args:
@@ -83,7 +83,7 @@ steps:
         kubectl -n argocd patch svc argocd-server -p '{"spec": {"type": "LoadBalancer"}}'
       
 
-  # Step 9: Wait for ArgoCD components to be ready
+  # Step 10: Wait for ArgoCD components to be ready
   - name: 'gcr.io/cloud-builders/kubectl'
     entrypoint: 'bash'
     args:
@@ -114,7 +114,7 @@ steps:
       - |
         echo "Waiting for ArgoCD external IP..."
         for i in {1..30}; do
-          _ARGOCD_IP=$(kubectl -n ${_ARGOCD_NAMESPACE} get svc argocd-server -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          _ARGOCD_IP=$(kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
           if [[ -z "$_ARGOCD_IP" ]]; then
             echo "Waiting for external IP... ($i/30)"
             sleep 10
