@@ -106,17 +106,38 @@ steps:
         curl -sSL https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64 -o /usr/local/bin/argocd
         chmod +x /usr/local/bin/argocd
         echo "ArgoCD CLI installation completed."
-                  
-  # Step 10: Fetch ArgoCD's external IP address and log in
+  # Step 3: Wait for ArgoCD external IP to be available
   - name: 'gcr.io/cloud-builders/kubectl'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        _ARGOCD_IP=$(kubectl -n argocd get svc argocd-server -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-        echo "ArgoCD Server External IP: $_ARGOCD_IP"
-        kubectl config set-context --current --namespace=argocd
+        echo "Waiting for ArgoCD external IP..."
+        for i in {1..30}; do
+          _ARGOCD_IP=$(kubectl -n ${_ARGOCD_NAMESPACE} get svc argocd-server -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          if [[ -z "$_ARGOCD_IP" ]]; then
+            echo "Waiting for external IP... ($i/30)"
+            sleep 10
+          else
+            break
+          fi
+        done
+        if [[ -z "$_ARGOCD_IP" ]]; then
+          echo "Error: Failed to retrieve ArgoCD external IP."
+          exit 1
+        fi
+        echo "ArgoCD External IP: $_ARGOCD_IP"
+  # Step 4: Login to ArgoCD
+  - name: 'gcr.io/cloud-builders/kubectl'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Logging in to ArgoCD..."
+        kubectl config set-context --current --namespace argocd
         argocd login $_ARGOCD_IP --username admin --password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
+                  
+ 
    
 
   # Step 11: Create ArgoCD Application
