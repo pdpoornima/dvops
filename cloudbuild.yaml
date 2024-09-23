@@ -1,8 +1,7 @@
 options:
   logging: CLOUD_LOGGING_ONLY
   machineType: 'E2_MEDIUM'  # Change here to match the cluster's node type
-substitutions:
-  _ARGOCD_IP: ''  # You can pass the ArgoCD IP dynamically here or fetch it within the pipeline
+
   
 
 steps:
@@ -139,8 +138,6 @@ steps:
         kubectl config set-context --current --namespace argocd
         argocd login $_ARGOCD_IP --username admin --password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
                   
- 
-   
 
   # Step 14: Create ArgoCD Application
   - name: 'gcr.io/cloud-builders/kubectl'
