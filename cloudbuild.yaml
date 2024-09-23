@@ -115,18 +115,20 @@ steps:
         echo "Waiting for ArgoCD external IP..."
         for i in {1..30}; do
           _ARGOCD_IP=$(kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-          if [[ -z "$_ARGOCD_IP" ]]; then
-            echo "Waiting for external IP... ($i/30)"
-            sleep 10
-          else
+          if [[ -n "$_ARGOCD_IP" ]]; then
+            echo "ArgoCD Server External IP: $_ARGOCD_IP"
             break
           fi
+          echo "External IP not available yet. Retrying in 10 seconds..."
+          sleep 10
         done
+
         if [[ -z "$_ARGOCD_IP" ]]; then
-          echo "Error: Failed to retrieve ArgoCD external IP."
+          echo "Error: Failed to retrieve ArgoCD external IP after multiple attempts."
           exit 1
         fi
-        echo "ArgoCD External IP: $_ARGOCD_IP"
+
+ 
   # Step 13: Login to ArgoCD
   - name: 'gcr.io/cloud-builders/kubectl'
     entrypoint: 'bash'
