@@ -112,7 +112,7 @@ steps:
       - '-c'
       - |
         echo "Fetching service details..."
-        kubectl -n ${_ARGOCD_NAMESPACE} describe svc argocd-server
+        kubectl describe svc argocd-server -n argocd
         echo "Service details fetched."
         echo "Waiting for ArgoCD external IP..."
         for i in {1..30}; do
