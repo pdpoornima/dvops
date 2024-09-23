@@ -111,6 +111,9 @@ steps:
     args:
       - '-c'
       - |
+        echo "Fetching service details..."
+        kubectl -n ${_ARGOCD_NAMESPACE} describe svc argocd-server
+        echo "Service details fetched."
         echo "Waiting for ArgoCD external IP..."
         for i in {1..30}; do
           _ARGOCD_IP=$(kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
