@@ -106,7 +106,7 @@ steps:
         curl -sSL https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64 -o /usr/local/bin/argocd
         chmod +x /usr/local/bin/argocd
         echo "ArgoCD CLI installation completed."
-  # Step 3: Wait for ArgoCD external IP to be available
+  # Step 12: Wait for ArgoCD external IP to be available
   - name: 'gcr.io/cloud-builders/kubectl'
     entrypoint: 'bash'
     args:
@@ -127,7 +127,7 @@ steps:
           exit 1
         fi
         echo "ArgoCD External IP: $_ARGOCD_IP"
-  # Step 4: Login to ArgoCD
+  # Step 13: Login to ArgoCD
   - name: 'gcr.io/cloud-builders/kubectl'
     entrypoint: 'bash'
     args:
@@ -140,7 +140,7 @@ steps:
  
    
 
-  # Step 11: Create ArgoCD Application
+  # Step 14: Create ArgoCD Application
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
       - 'apply'
@@ -148,7 +148,7 @@ steps:
       - 'argocd-application.yaml'
 
 
-  # Step 12: Sync ArgoCD Application
+  # Step 15: Sync ArgoCD Application
   - name: 'gcr.io/cloud-builders/kubectl'
     entrypoint: 'bash'
     args:
