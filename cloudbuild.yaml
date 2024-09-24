@@ -50,5 +50,14 @@ steps:
       - '-c'
       - |
         kubectl get namespace gitops || kubectl create namespace gitops
+  # Step 7: Apply ArgoCD Application YAML to the 'gitops' namespace
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'apply'
+      - '-f'
+      - 'argocd-application.yaml'
+      - '-n'
+      - 'gitops'
+
 
 timeout: 1200s
