@@ -62,6 +62,11 @@ steps:
       - 'argocd-application.yaml'
       - '-n'
       - 'argocd'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=us-east5-a'
+      - 'CLOUDSDK_COMPUTE_REGION=us-east5'
+      - 'KUBECTL_VERSION=1.27'
+      - 'CLOUDSDK_GET_CREDENTIALS_OPTS=--quiet'
 
 
 timeout: 1200s
