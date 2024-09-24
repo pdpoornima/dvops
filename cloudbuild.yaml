@@ -4,6 +4,8 @@ options:
 steps:
   # Step 1: Authenticate with the Kubernetes cluster
   - name: 'gcr.io/cloud-builders/gcloud'
+    env:
+      - 'CLOUDSDK_GET_CREDENTIALS_OPTS=--quiet'
     args:
       - 'container'
       - 'clusters'
@@ -46,6 +48,8 @@ steps:
   # Step 6: Create the 'gitops' namespace if it does not exist
   - name: 'gcr.io/cloud-builders/kubectl'
     entrypoint: 'bash'
+    env:
+      - 'KUBECTL_VERSION=1.30' # Specify kubectl version here
     args:
       - '-c'
       - |
