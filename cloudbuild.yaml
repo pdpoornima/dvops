@@ -61,7 +61,7 @@ steps:
       - '-f'
       - 'argocd-application.yaml'
       - '-n'
-      - 'gitops'
+      - 'argocd'
 
 
 timeout: 1200s
