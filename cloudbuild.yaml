@@ -65,7 +65,7 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=us-east5-a'
       - 'CLOUDSDK_COMPUTE_REGION=us-east5'
-      - 'KUBECTL_VERSION=1.27'
+      - 'KUBECTL_VERSION=1.30'
       - 'CLOUDSDK_GET_CREDENTIALS_OPTS=--quiet'
 
 
